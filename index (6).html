@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>It All Started As A Joke</title>
+    <!-- Romantic Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #fff5f5;
+            --primary-pink: #ffb3c1;
+            --dark-pink: #fb6f92;
+            --tulip-stem: #95d5b2;
+            --text-color: #4a3b32;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Quicksand', sans-serif;
+            color: var(--text-color);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Ambient floating petals */
+        .petals-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .petal {
+            position: absolute;
+            background: linear-gradient(135deg, #ffccd5, #ffb3c1);
+            border-radius: 150px 0 150px 150px;
+            opacity: 0.7;
+            animation: float 8s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(-10%) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(110%) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- SCREEN 1: THE INTERACTIVE BLOOM --- */
+        #interactive-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            z-index: 5;
+            transition: opacity 1s ease-out;
+        }
+
+        .prompt-text {
+            font-family: 'Caveat', cursive;
+            font-size: 1.8rem;
+            color: var(--dark-pink);
+            margin-bottom: 40px;
+            animation: pulse 2s infinite;
+        }
+
+        /* Unique Garden/Tulip Button */
+        .garden-plot {
+            position: relative;
+            width: 200px;
+            height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .seed-button {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #ff8fa3, #ffb3c1);
+            border-radius: 50% 50% 40% 40%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 20px rgba(251, 111, 146, 0.3);
+            font-size: 1.8rem;
+            color: white;
+            transition: all 0.3s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            z-index: 2;
+        }
+
+        .soil {
+            width: 120px;
+            height: 20px;
+            background: #d4a373;
+            border-radius: 50%;
+            margin-top: -10px;
+            opacity: 0.7;
+            transition: all 0.5s ease;
+        }
+
+        /* Growing Stem & Flower elements */
+        .growing-stem {
+            position: absolute;
+            bottom: 20px;
+            width: 6px;
+            height: 0px;
+            background-color: var(--tulip-stem);
+            border-radius: 3px;
+            transition: height 3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .growing-bud {
+            position: absolute;
+            bottom: 20px;
+            width: 0px;
+            height: 0px;
+            background: linear-gradient(to top, var(--dark-pink), var(--primary-pink));
+            border-radius: 50% 50% 30% 30%;
+            opacity: 0;
+            transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateY(0);
+        }
+
+        /* Active pressing state */
+        .garden-plot:active .seed-button, 
+        .garden-plot.growing .seed-button {
+            transform: scale(0.9) translateY(10px);
+            opacity: 0;
+        }
+
+        .garden-plot.growing .growing-stem {
+            height: 140px;
+        }
+
+        .garden-plot.growing .growing-bud {
+            width: 45px;
+            height: 60px;
+            opacity: 1;
+            transform: translateY(-140px);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 15px rgba(251, 111, 146, 0.4);
+        }
+
+        /* --- SCREEN 2: THE POETIC SCROLL --- */
+        #letter-screen {
+            display: none;
+            max-width: 600px;
+            width: 90%;
+            margin: 40px auto;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: 0 15px 40px rgba(251, 111, 146, 0.15);
+            border: 2px solid #ffe5ec;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1.5s ease-out;
+            z-index: 5;
+        }
+
+        .title-area {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.3rem;
+            color: var(--dark-pink);
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+
+        .tulip-divider {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            color: var(--dark-pink);
+            font-size: 1.2rem;
+        }
+
+        .poem-body {
+            font-family: 'Caveat', cursive;
+            font-size: 1.6rem;
+            line-height: 1.7;
+            letter-spacing: 0.5px;
+        }
+
+        .stanza {
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s ease-out;
+        }
+
+        .stanza.reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .highlight {
+            color: var(--dark-pink);
+            font-weight: 600;
+        }
+
+        .ending-smile {
+            text-align: center;
+            font-size: 2rem;
+            margin-top: 20px;
+            color: var(--dark-pink);
+            animation: bounce 2s infinite;
+        }
+
+        /* Tooltip hint */
+        .hint {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; }
+            .poem-body { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="petals-container" id="petals"></div>
+
+    <!-- Screen 1: The Interactive Plant -->
+    <div id="interactive-screen">
+        <p class="prompt-text">Tap and hold the bud to let love grow...</p>
+        
+        <div class="garden-plot" id="gardenPlot">
+            <div class="growing-bud"></div>
+            <div class="growing-stem"></div>
+            <div class="seed-button">🌷</div>
+            <div class="soil"></div>
+        </div>
+        
+        <p class="hint">(Hold down or tap continuously until it blooms)</p>
+    </div>
+
+    <!-- Screen 2: The Letter Scroll -->
+    <div id="letter-screen">
+        <div class="title-area">
+            <h1>It all started as a joke...</h1>
+            <div class="tulip-divider">🌷 <span>•</span> 🌷 <span>•</span> 🌷</div>
+        </div>
+
+        <div class="poem-body">
+            <div class="stanza">
+                It all started as a joke when I met her. It was so unexpectedly, because it all started on a random day when I caught my feelings—just words, and laughing, and stuff.
+            </div>
+
+            <div class="stanza">
+                Days after days, we laughed like no one was around us, even though there was someone watching. I'm so glad I enrolled in that high school. It didn't even feel real, but it felt like a real school because... I didn't intend to find someone so truly interesting. 
+            </div>
+
+            <div class="stanza">
+                Someone like <span class="highlight">you</span>.
+            </div>
+
+            <div class="stanza">
+                Now, my whole world revolves around you. I think about you daily, and day by day, I tried to explore your soul. But it was so limited, because you couldn't try something deeper... you were scared. But I deeply, truly understand that. 
+            </div>
+
+            <div class="stanza">
+                So many things happened loudly and quietly, yet still we managed to fill back in. I don't really need an answer; just being with you makes me happy. You take me above the sky, giving me comfort even on the hardest days. 
+            </div>
+
+            <div class="stanza">
+                <span class="highlight">I choose you.</span> I don't even make you an option. When somedays someone questions me, that's just how I see myself. I deeply, genuinely care about you, even when I can't express it or approach the problems you won't tell. But I promise you, I'm here, asking the Gods above to help you with everything.
+            </div>
+
+            <div class="stanza">
+                I remember when you told me you felt miserable, but I don't see you that way. Never. I feel like I can love you to the fullest, imperfectly. Even if these letters can't even begin to tell you how much I've loved you since the day we met.
+            </div>
+
+            <div class="stanza">
+                The first time, I stood like a statue around you. You looked stunning and divine in real life. It felt like I found my true angel. It was true—I couldn't even look at you straightly or talk to you deeply because I felt like I couldn't reach you. I never got the chance, but it felt so real. 
+            </div>
+
+            <div class="stanza">
+                When I held your hand, it felt so soft, gentle, and heavenly. 
+            </div>
+
+            <div class="stanza">
+                As it was happening, I kept recalling things that are so memorable. Everything. You just don't know it, but every single part of it, I remember. Even though my memory is usually like a fish, when it comes to you, it's like magic. I recall things so easily when you are part of it. 
+            </div>
+
+            <div class="stanza">
+                Every day, every night, it's still you. Although I know the spark of you is gone right now, <span class="highlight">I am still here waiting</span>. Because if I was a fool for you, I'd wait 500 million hours. 
+            </div>
+
+            <div class="stanza">
+                My heart only beats for you, and I'm happy that it's you. I know we've only known each other for months, but it feels like an eternity. Only if you can trust me and lend me a ladder into your walls, so I could peek at how beautiful you are. 
+            </div>
+
+            <div class="stanza">
+                I am not trying to destroy them, and I never will. I just want to get close to you. Nothing else. My intentions are completely clear. You know I don't usually do this type of thing... but for you, I would. 
+            </div>
+
+            <div class="stanza">
+                And that's why I know... I have found my soulmate.
+                <div class="ending-smile">:D</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Floating Petals Generator ---
+        const petalsContainer = document.getElementById('petals');
+        const petalCount = 25;
+
+        for (let i = 0; i < petalCount; i++) {
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            petal.style.left = `${Math.random() * 100}%`;
+            petal.style.width = `${Math.random() * 15 + 10}px`;
+            petal.style.height = `${Math.random() * 15 + 10}px`;
+            petal.style.animationDelay = `${Math.random() * 8}s`;
+            petal.style.animationDuration = `${Math.random() * 5 + 5}s`;
+            petalsContainer.appendChild(petal);
+        }
+
+        // --- Interactive Bloom Interaction ---
+        const gardenPlot = document.getElementById('gardenPlot');
+        const interactiveScreen = document.getElementById('interactive-screen');
+        const letterScreen = document.getElementById('letter-screen');
+        const stanzas = document.querySelectorAll('.stanza');
+
+        let interactionTimeout;
+
+        function triggerBloom() {
+            if (gardenPlot.classList.contains('growing')) return;
+            
+            gardenPlot.classList.add('growing');
+            
+            // Wait for the growth animation to complete, then switch screens
+            setTimeout(() => {
+                interactiveScreen.style.opacity = '0';
+                
+                setTimeout(() => {
+                    interactiveScreen.style.display = 'none';
+                    letterScreen.style.display = 'block';
+                    
+                    // Smooth trigger for letter entry
+                    setTimeout(() => {
+                        letterScreen.style.opacity = '1';
+                        letterScreen.style.transform = 'translateY(0)';
+                        revealStanzas();
+                    }, 100);
+                }, 1000);
+            }, 2800);
+        }
+
+        // Mouse & Touch triggers
+        gardenPlot.addEventListener('mousedown', () => {
+            interactionTimeout = setTimeout(triggerBloom, 200);
+        });
+
+        gardenPlot.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            interactionTimeout = setTimeout(triggerBloom, 200);
+        });
+
+        window.addEventListener('mouseup', () => clearTimeout(interactionTimeout));
+        window.addEventListener('touchend', () => clearTimeout(interactionTimeout));
+        // Fallback for click
+        gardenPlot.addEventListener('click', triggerBloom);
+
+        // --- Graceful Stanza Reveal on Scroll ---
+        function revealStanzas() {
+            stanzas.forEach((stanza, index) => {
+                setTimeout(() => {
+                    stanza.classList.add('reveal');
+                }, index * 400); // Cascading reveal delay
+            });
+        }
+    </script>
+</body>
+</html>
